@@ -1,21 +1,30 @@
 import React, { useState, useEffect } from 'react'
 import NoteImg from '../../assets/notes.png'
-import { FiTrash, FiDownload, FiClipboard, FiTrash2 } from 'react-icons/fi'
+import { FiTrash, FiDownload, FiClipboard } from 'react-icons/fi'
+import { RxReset } from 'react-icons/rx'
+import { AiOutlineSetting } from 'react-icons/ai'
 import Swal from 'sweetalert2';
 import { toast } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
+import { appName } from '../../AppName';
+import SettingModal from './SettingModal'
 
 export default function Notes() {
   const [notes, setNotes] = useState(localStorage.getItem('kNotes') ? JSON.parse(localStorage.getItem('kNotes') as any) : []);
+  const [showCharWord, setShowCharWord] = useState<string>('false');
 
   useEffect(() => {
     if (notes.length === 0) {
       const newNote = {
-        id: Date.now() + "" + Math.floor(Math.random() * 78),
+        id: "kNotes-" + Date.now() + "" + Math.floor(Math.random() * 78),
         content: '',
         wordCount: 0,
         characterCount: 0,
+        fontSize: notes[0]?.fontSize || '14',
+        fontWeight: notes[0]?.fontWeight || 'normal',
+        fontColor: notes[0]?.fontColor || '#000000',
         time: Date.now(),
+        author: appName,
       };
       const newNotes = [...notes, newNote];
       setNotes(newNotes);
@@ -54,6 +63,14 @@ export default function Notes() {
       })
     }
   };
+
+  // let timer = 1000,
+  //   timeout: any;
+
+  // const debounce = (func: Function) => {
+  //   clearTimeout(timeout);
+  //   timeout = setTimeout(func, timer);
+  // };
 
   const formatDate = (value: any) => {
     if (!value) return "";
@@ -107,11 +124,15 @@ export default function Notes() {
 
   const handleAddNote = () => {
     const newNote = {
-      id: Date.now() + "" + Math.floor(Math.random() * 78),
+      id: "kNotes-" + Date.now() + "" + Math.floor(Math.random() * 78),
       content: '',
       wordCount: 0,
       characterCount: 0,
+      fontSize: notes[0].fontSize || '14',
+      fontWeight: notes[0].fontWeight || 'normal',
+      fontColor: notes[0].fontColor || '#000000',
       time: Date.now(),
+      author: appName,
     };
     const newNotes = [...notes, newNote];
     setNotes(newNotes);
@@ -202,79 +223,115 @@ export default function Notes() {
     );
 
     setNotes(updatedNotes);
+    // debounce(() => {
+    localStorage.setItem('kNotes', JSON.stringify(updatedNotes));
+    // });
+  };
+
+  const handleFontSize = (size: any) => {
+    const updatedNotes = notes.map((note: any) => {
+      note.fontSize = size;
+      return note;
+    }
+    );
+
+    setNotes(updatedNotes);
+    localStorage.setItem('kNotes', JSON.stringify(updatedNotes));
+  };
+
+  const handleFontWeight = (type: any) => {
+    const updatedNotes = notes.map((note: any) => {
+      note.fontWeight = type;
+      return note;
+    }
+    );
+
+    setNotes(updatedNotes);
+    localStorage.setItem('kNotes', JSON.stringify(updatedNotes));
+  };
+
+  const handleFontColor = (type: any) => {
+    const updatedNotes = notes.map((note: any) => {
+      note.fontColor = type;
+      return note;
+    }
+    );
+
+    setNotes(updatedNotes);
     localStorage.setItem('kNotes', JSON.stringify(updatedNotes));
   };
 
   return (
     <div className="lg:container px-8 mx-auto py-8">
       <Link to="/">
-        <h1 className="text-2xl md:text-4xl lg:text-5xl select-none font-bold mb-4 text-center text-white flex md:justify-center items-center gap-1"><img src={NoteImg} className='w-10 md:w-12' alt="" />KNotes</h1>
+        <h1 className="text-2xl md:text-4xl lg:text-5xl select-none font-bold mb-4 text-center text-white flex md:justify-center items-center gap-1"><img src={NoteImg} className='w-10 md:w-12' alt="" />{appName}</h1>
       </Link>
-      {/* <div>
-        <p className='text-white select-none w-full md:w-2/3 lg:w-1/2 md:text-center mx-auto'>Welcome! This is a Progressive Notepad Web App</p>
-        <p className='text-white select-none w-full md:w-2/3 lg:w-1/2 md:text-center mx-auto mt-5'>The app serves the following features:</p>
-
-        <ul className='text-white select-none w-full md:w-2/3 lg:w-1/2 md:text-center mx-auto mt-5'>
-          <li>- Write notes which are then saved to the localStorage.</li>
-          <li>- Privacy-focused - We'll never collect your precious data.</li>
-          <li>- Lightweight - Loads almost instantly.</li>
-        </ul>
-
-        <p className='text-white select-none w-full md:w-2/3 lg:w-1/2 md:text-center mt-5 mx-auto'>
-          <span className='font-semibold'>CAUTION: </span>Since the app uses the browser's localStorage to store your notes,
-          it's recommended that you take a backup of your messages more often using the
-          "Download Notes" button.
-        </p>
-      </div> */}
-      <div className="flex md:justify-center items-center my-6 md:my-10">
+      <div className="flex md:justify-center items-center my-6 md:my-10 gap-3">
         <button
           className="glass uppercase font-semibold bg-gradient-to-bl md:bg-gradient-to-tl from-[#cf9aff] to-[#95c0ff] text-white py-2 px-4 rounded-xl focus:outline-none focus:shadow-outline"
           onClick={handleAddNote}
         >
           Add Note
         </button>
+        <label htmlFor="settingModal" className='cursor-pointer'>
+          <p className="glass bg-gradient-to-tr md:bg-gradient-to-bl from-[#cf9aff] to-[#95c0ff] text-white py-3 px-4 rounded-xl uppercase font-semibold -mt-1 focus:outline-none focus:shadow-outline">
+            <AiOutlineSetting />
+          </p>
+        </label>
       </div>
 
       <div className='grid grid-cols-1 md:grid-cols-2 gap-5'>
         {notes.slice().reverse().map((note: any) => (
           <div key={note.id} className="mb-4">
-            <div className="flex justify-end items-center">
-              <span className="text-sm text-white select-none glass rounded-tl-3xl rounded-tr-xl p-2 mb-[.15rem]">
-                {formatDate(note.time)}
+            <div className="flex justify-end items-center text-end">
+              <span className={`text-white select-none glass rounded-tl-3xl rounded-tr-xl ${showCharWord ? 'p-1 text-xs px-3.5' : 'p-3 text-sm'} mb-[.15rem]`}>
+                {formatDate(note.time)} {
+                  showCharWord === 'true' && (
+                    <>
+                      <br /> {note.characterCount} character(s), {note.wordCount} word(s)
+                    </>
+                  )
+                }
               </span>
             </div>
             <textarea
-              className={`textarea focus:outline-none rounded-tl-xl rounded-br-xl placeholder:text-white glass rounded-none p-4 w-full relative`}
-              style={{ minHeight: "250px", resize: "none" }}
+              className={`textarea focus:outline-none rounded-tl-xl rounded-br-xl placeholder:text-white glass rounded-none p-4 w-full`}
+              style={{ minHeight: "250px", resize: "none", fontSize: `${note.fontSize}px`, fontWeight: `${note.fontWeight}`, color: `${note.fontColor}` }}
               value={note.content}
               placeholder="Type your note here..."
               onChange={(e) => handleNoteChange(note.id, e.target.value)}
             />
-            <p className='mb-3'>
-              <small className="text-white rounded-br-xl select-none glass p-2">
-                {note.characterCount} character(s), {note.wordCount} word(s)
-              </small>
-            </p>
-            <button
-              className="glass bg-gradient-to-tl md:bg-gradient-to-br from-[#cf9aff] to-[#95c0ff] text-white py-3 px-4 rounded-xl rounded-tl-none rounded-tr-none rounded-br-none uppercase font-semibold -mt-1 focus:outline-none focus:shadow-outline"
-              onClick={() => handleDeleteNote(note.id)}>
-              <FiTrash />
-            </button>
-            <button
-              className="glass bg-gradient-to-br ml-1 md:bg-gradient-to-tl to-[#95c0ff] from-[#cf9aff] text-white py-3 px-4 rounded-none uppercase font-semibold -mt-1 focus:outline-none focus:shadow-outline"
-              onClick={() => handleCopyToClipboard(note.id)}>
-              <FiClipboard />
-            </button>
-            <button
-              className="glass bg-gradient-to-tl ml-1 md:bg-gradient-to-br from-[#cf9aff] to-[#95c0ff] text-white py-3 px-4 rounded-none uppercase font-semibold -mt-1 focus:outline-none focus:shadow-outline"
-              onClick={() => handleClearNote(note.id)}>
-              <FiTrash2 />
-            </button>
-            <button
-              className="glass bg-gradient-to-br ml-1 md:bg-gradient-to-tl to-[#95c0ff] from-[#cf9aff] text-white py-3 px-4 rounded-xl rounded-tl-none rounded-tr-none rounded-bl-none uppercase font-semibold -mt-1 focus:outline-none focus:shadow-outline"
-              onClick={() => handleDownload(note.id)}>
-              <FiDownload />
-            </button>
+            <div className='flex justify-start items-center gap-1'>
+              <span className='tooltip' data-tip="Delete Note">
+                <button
+                  className="glass bg-gradient-to-tl md:bg-gradient-to-br from-[#cf9aff] to-[#95c0ff] text-white py-3 px-4 rounded-xl rounded-tl-none rounded-tr-none rounded-br-none uppercase font-semibold -mt-1 focus:outline-none focus:shadow-outline"
+                  onClick={() => handleDeleteNote(note.id)}>
+                  <FiTrash />
+                </button>
+              </span>
+              <span className='tooltip' data-tip="Copy Note">
+                <button
+                  className="glass bg-gradient-to-br md:bg-gradient-to-tl to-[#95c0ff] from-[#cf9aff] text-white py-3 px-4 rounded-none uppercase font-semibold -mt-1 focus:outline-none focus:shadow-outline"
+                  onClick={() => handleCopyToClipboard(note.id)}>
+                  <FiClipboard />
+                </button>
+              </span>
+              <span className='tooltip' data-tip="Clear Note">
+                <button
+                  className="glass bg-gradient-to-tl md:bg-gradient-to-br from-[#cf9aff] to-[#95c0ff] text-white py-3 px-4 rounded-none uppercase font-semibold -mt-1 focus:outline-none focus:shadow-outline"
+                  onClick={() => handleClearNote(note.id)}>
+                  <RxReset />
+                </button>
+              </span>
+              <span className='tooltip' data-tip="Download Note">
+                <button
+                  className="glass bg-gradient-to-br md:bg-gradient-to-tl to-[#95c0ff] from-[#cf9aff] text-white py-3 px-4 rounded-xl rounded-tl-none rounded-tr-none rounded-bl-none uppercase font-semibold -mt-1 focus:outline-none focus:shadow-outline"
+                  onClick={() => handleDownload(note.id)}>
+                  <FiDownload />
+                </button>
+              </span>
+            </div>
+            <SettingModal handleFontSize={handleFontSize} handleFontWeight={handleFontWeight} handleFontColor={handleFontColor} setShowCharWord={setShowCharWord} note={note} />
           </div>
         ))}
       </div>
