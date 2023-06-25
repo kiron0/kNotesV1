@@ -1,21 +1,24 @@
 import React from 'react'
 
-export default function SettingModal({ handleFontSize, handleFontWeight, handleFontColor, setShowCharWord, showCharWord, note }: any) {
+export default function SettingModal({ setting, handleFontSize, handleFontWeight, handleFontColor, handleShowCharWord }: any) {
           const handleReset = (e: any) => {
                     e.preventDefault();
                     handleFontSize('14')
-                    handleFontWeight('')
-                    handleFontColor('')
-                    setShowCharWord('true')
+                    handleFontWeight('normal')
+                    handleFontColor('black')
+                    handleShowCharWord('true')
 
                     const selectFontSize = document.getElementById('selectFontSize') as HTMLSelectElement
                     selectFontSize.value = '14'
                     const selectFontWeight = document.getElementById('selectFontWeight') as HTMLSelectElement
-                    selectFontWeight.value = ''
+                    selectFontWeight.value = 'normal'
                     const selectFontColor = document.getElementById('selectFontColor') as HTMLSelectElement
-                    selectFontColor.value = ''
+                    selectFontColor.value = 'black'
                     const showCharWord = document.getElementById('showCharWord') as HTMLSelectElement
                     showCharWord.value = 'true'
+
+                    const updatedSetting = { ...setting, fontSize: '14', fontWeight: 'normal', fontColor: 'black', showCharWord: 'true' };
+                    localStorage.setItem('kNotesSetting', JSON.stringify(updatedSetting));
           }
 
           return (
@@ -30,7 +33,7 @@ export default function SettingModal({ handleFontSize, handleFontWeight, handleF
                                                                                 <span className="label-text-alt">Font Size</span>
                                                                       </label>
                                                                       <select id='selectFontSize' className="select focus:outline-none w-full"
-                                                                                defaultValue={note.fontSize ? note.fontSize : '14'}
+                                                                                defaultValue={setting.fontSize}
                                                                                 onChange={(e) => {
                                                                                           handleFontSize(e.target.value)
                                                                                 }
@@ -52,13 +55,13 @@ export default function SettingModal({ handleFontSize, handleFontWeight, handleF
                                                                                 <span className="label-text-alt">Font Weight</span>
                                                                       </label>
                                                                       <select id='selectFontWeight' className="select focus:outline-none w-full"
-                                                                                defaultValue={note.fontWeight ? note.fontWeight : ''}
+                                                                                defaultValue={setting.fontWeight ? setting.fontWeight : ''}
                                                                                 onChange={(e) => {
                                                                                           handleFontWeight(e.target.value)
                                                                                 }
                                                                                 }
                                                                       >
-                                                                                <option value={''}>Normal</option>
+                                                                                <option value={'normal'}>Normal</option>
                                                                                 <option value={'bold'}>Bold</option>
                                                                       </select>
                                                             </div>
@@ -67,13 +70,13 @@ export default function SettingModal({ handleFontSize, handleFontWeight, handleF
                                                                                 <span className="label-text-alt">Font Color</span>
                                                                       </label>
                                                                       <select id='selectFontColor' className="select focus:outline-none w-full"
-                                                                                defaultValue={note.fontWeight ? note.fontWeight : ''}
+                                                                                defaultValue={setting.fontColor ? setting.fontColor : ''}
                                                                                 onChange={(e) => {
                                                                                           handleFontColor(e.target.value)
                                                                                 }
                                                                                 }
                                                                       >
-                                                                                <option value={''}>Default</option>
+                                                                                <option value={'black'}>Default</option>
                                                                                 <option value={'white'}>White</option>
                                                                       </select>
                                                             </div>
@@ -82,9 +85,9 @@ export default function SettingModal({ handleFontSize, handleFontWeight, handleF
                                                                                 <span className="label-text-alt">Show character and word count</span>
                                                                       </label>
                                                                       <select id='showCharWord' className="select focus:outline-none w-full"
-                                                                                defaultValue={showCharWord === 'true' ? 'Yes' : 'No'}
+                                                                                defaultValue={setting.showCharWord === 'false' ? 'false' : 'true'}
                                                                                 onChange={(e) => {
-                                                                                          setShowCharWord(e.target.value)
+                                                                                          handleShowCharWord(e.target.value)
                                                                                 }
                                                                                 }
                                                                       >
@@ -92,7 +95,7 @@ export default function SettingModal({ handleFontSize, handleFontWeight, handleF
                                                                                 <option value={'false'}>No</option>
                                                                       </select>
                                                             </div>
-                                                            <button className='mt-5 flex mx-auto btn btn-sm'>Reset Preferences</button>
+                                                            {/* <button className='mt-5 flex mx-auto btn btn-sm'>Reset Preferences</button> */}
                                                   </form>
                                                   <div className="modal-action">
                                                             <label htmlFor="settingModal" className="btn btn-sm">Close!</label>

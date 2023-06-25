@@ -24,3 +24,10 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background-color: #363536;
 }
+
+.hide-cursor {
+  caret-color: transparent; /* Hides the cursor color */
+  color: transparent; /* Hides the text color */
+  text-shadow: 0 0 0 black; /* Hides the cursor shadow */
+  cursor: not-allowed;
+}

@@ -3,11 +3,16 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import NotFound from './shared/NotFound/NotFound';
 import { Toaster } from 'react-hot-toast';
 import Root from './Layouts/Root';
+import Note from './pages/Note/Note';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <Root />,
+  },
+  {
+    path: '/note/:id',
+    element: <Note />,
   },
   {
     path: "*",

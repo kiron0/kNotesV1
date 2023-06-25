@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import NoteImg from '../../assets/notes.png'
-import { FiTrash, FiDownload, FiClipboard } from 'react-icons/fi'
+import { FiTrash, FiDownload, FiClipboard, FiShare2 } from 'react-icons/fi'
 import { RxReset } from 'react-icons/rx'
 import { AiOutlineSetting } from 'react-icons/ai'
 import Swal from 'sweetalert2';
@@ -11,7 +11,9 @@ import SettingModal from './SettingModal'
 
 export default function Notes() {
   const [notes, setNotes] = useState(localStorage.getItem('kNotes') ? JSON.parse(localStorage.getItem('kNotes') as any) : []);
-  const [showCharWord, setShowCharWord] = useState<string>('false');
+  const [setting, setSetting] = useState(localStorage.getItem('kNotesSetting') ? JSON.parse(localStorage.getItem('kNotesSetting') as any) : {
+    showCharWord: 'true',
+  });
 
   useEffect(() => {
     if (notes.length === 0) {
@@ -20,9 +22,6 @@ export default function Notes() {
         content: '',
         wordCount: 0,
         characterCount: 0,
-        fontSize: notes[0]?.fontSize || '14',
-        fontWeight: notes[0]?.fontWeight || 'normal',
-        fontColor: notes[0]?.fontColor || '#000000',
         time: Date.now(),
         author: appName,
       };
@@ -128,9 +127,6 @@ export default function Notes() {
       content: '',
       wordCount: 0,
       characterCount: 0,
-      fontSize: notes[0].fontSize || '14',
-      fontWeight: notes[0].fontWeight || 'normal',
-      fontColor: notes[0].fontColor || '#000000',
       time: Date.now(),
       author: appName,
     };
@@ -229,37 +225,55 @@ export default function Notes() {
   };
 
   const handleFontSize = (size: any) => {
-    const updatedNotes = notes.map((note: any) => {
-      note.fontSize = size;
-      return note;
-    }
-    );
+    const updatedSetting = { ...setting, fontSize: size };
+    setSetting(updatedSetting);
 
-    setNotes(updatedNotes);
-    localStorage.setItem('kNotes', JSON.stringify(updatedNotes));
+    localStorage.setItem('kNotesSetting', JSON.stringify(updatedSetting));
   };
 
   const handleFontWeight = (type: any) => {
-    const updatedNotes = notes.map((note: any) => {
-      note.fontWeight = type;
-      return note;
-    }
-    );
+    const updatedSetting = { ...setting, fontWeight: type };
+    setSetting(updatedSetting);
 
-    setNotes(updatedNotes);
-    localStorage.setItem('kNotes', JSON.stringify(updatedNotes));
+    localStorage.setItem('kNotesSetting', JSON.stringify(updatedSetting));
   };
 
   const handleFontColor = (type: any) => {
-    const updatedNotes = notes.map((note: any) => {
-      note.fontColor = type;
-      return note;
-    }
-    );
+    const updatedSetting = { ...setting, fontColor: type };
+    setSetting(updatedSetting);
 
-    setNotes(updatedNotes);
-    localStorage.setItem('kNotes', JSON.stringify(updatedNotes));
+    localStorage.setItem('kNotesSetting', JSON.stringify(updatedSetting));
   };
+
+  const handleShowCharWord = (boolean: any) => {
+    const updatedSetting = { ...setting, showCharWord: boolean };
+    setSetting(updatedSetting);
+
+    localStorage.setItem('kNotesSetting', JSON.stringify(updatedSetting));
+  }
+
+  const handleShareNote = (id: any) => {
+    const slug = id.split('-')[1];
+    const shareUrl = window.location.href + 'note/' + slug;
+    Swal.fire({
+      text: 'Share this note?',
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonText: 'Copy Link',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        navigator.clipboard.writeText(shareUrl);
+        Swal.fire({
+          title: 'Copied!',
+          text: 'Shareable link copied to clipboard.',
+          icon: 'success',
+          timer: 1000,
+          showConfirmButton: false,
+        })
+      }
+    })
+  }
 
   return (
     <div className="lg:container px-8 mx-auto py-8">
@@ -284,9 +298,9 @@ export default function Notes() {
         {notes.slice().reverse().map((note: any) => (
           <div key={note.id} className="mb-4">
             <div className="flex justify-end items-center text-end">
-              <span className={`text-white select-none glass rounded-tl-3xl rounded-tr-xl ${showCharWord ? 'p-1 text-xs px-3.5' : 'p-3 text-sm'} mb-[.15rem]`}>
+              <span className={`text-white select-none glass rounded-tl-3xl rounded-tr-xl ${setting.showCharWord ? 'p-1 text-xs px-3.5' : 'p-3 text-sm'} mb-[.15rem]`}>
                 {formatDate(note.time)} {
-                  showCharWord === 'true' && (
+                  setting.showCharWord === 'true' && (
                     <>
                       <br /> {note.characterCount} character(s), {note.wordCount} word(s)
                     </>
@@ -296,7 +310,7 @@ export default function Notes() {
             </div>
             <textarea
               className={`textarea focus:outline-none rounded-tl-xl rounded-br-xl placeholder:text-white glass rounded-none p-4 w-full`}
-              style={{ minHeight: "250px", resize: "none", fontSize: `${note.fontSize}px`, fontWeight: `${note.fontWeight}`, color: `${note.fontColor}` }}
+              style={{ minHeight: "250px", resize: "none", fontSize: `${setting.fontSize}px`, fontWeight: `${setting.fontWeight}`, color: `${setting.fontColor}` }}
               value={note.content}
               placeholder="Type your note here..."
               onChange={(e) => handleNoteChange(note.id, e.target.value)}
@@ -325,13 +339,20 @@ export default function Notes() {
               </span>
               <span className='tooltip' data-tip="Download Note">
                 <button
-                  className="glass bg-gradient-to-br md:bg-gradient-to-tl to-[#95c0ff] from-[#cf9aff] text-white py-3 px-4 rounded-xl rounded-tl-none rounded-tr-none rounded-bl-none uppercase font-semibold -mt-1 focus:outline-none focus:shadow-outline"
+                  className="glass bg-gradient-to-br md:bg-gradient-to-tl to-[#95c0ff] from-[#cf9aff] text-white py-3 px-4 rounded-none uppercase font-semibold -mt-1 focus:outline-none focus:shadow-outline"
                   onClick={() => handleDownload(note.id)}>
                   <FiDownload />
                 </button>
               </span>
+              <span className='tooltip' data-tip="Share Note">
+                <button
+                  className="glass bg-gradient-to-br md:bg-gradient-to-tl to-[#95c0ff] from-[#cf9aff] text-white py-3 px-4 rounded-xl rounded-tl-none rounded-tr-none rounded-bl-none uppercase font-semibold -mt-1 focus:outline-none focus:shadow-outline"
+                  onClick={() => handleShareNote(note.id)}>
+                  <FiShare2 />
+                </button>
+              </span>
             </div>
-            <SettingModal handleFontSize={handleFontSize} handleFontWeight={handleFontWeight} handleFontColor={handleFontColor} setShowCharWord={setShowCharWord} note={note} />
+            <SettingModal setting={setting} handleFontSize={handleFontSize} handleFontWeight={handleFontWeight} handleFontColor={handleFontColor} handleShowCharWord={handleShowCharWord} />
           </div>
         ))}
       </div>
