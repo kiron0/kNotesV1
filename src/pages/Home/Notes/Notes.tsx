@@ -24,6 +24,18 @@ export default function Notes() {
   });
   const [userRole] = useUserRole(user);
 
+  // const [ipAddress, setIpAddress] = useState('');
+  // const [ipAddressLoading, setIpAddressLoading] = useState(false);
+
+  // useEffect(() => {
+  //   setIpAddressLoading(true);
+  //   axios.get('https://api.ipify.org/?format=json')
+  //     .then((res) => {
+  //       setIpAddress(res.data.ip);
+  //       setIpAddressLoading(false);
+  //     });
+  // }, []);
+
   const updateNote = (id: any) => {
     axios.patch(`${BASE_API}/note?id=${id}`, {
       content: notes.find((note: any) => note.id === id).content,
