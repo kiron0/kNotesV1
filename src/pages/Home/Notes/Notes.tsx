@@ -317,13 +317,16 @@ export default function Notes() {
             position: "top-center",
           });
         }).catch((err) => {
-          // toast for error
           toast(err.message, {
             icon: '👎',
           })
         })
       }
     })
+  };
+
+  const handleNoteBlur = (id: any) => {
+    updateNote(id);
   };
 
   return (
@@ -446,6 +449,7 @@ export default function Notes() {
               value={note.content}
               placeholder="Type your note here..."
               onChange={(e) => handleNoteChange(note.id, e.target.value)}
+              onBlur={() => handleNoteBlur(note.id)}
             />
             <div className='flex justify-start items-center gap-1'>
               <span className='tooltip' data-tip="Delete Note">
