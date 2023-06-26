@@ -72,7 +72,7 @@ const Dashboard: any = () => {
                                                                       {appName} <span className="text-xs md:hidden"> - Notepad Web App</span>
                                                             </Link>
                                                             <h1 className="text-lg md:text-2xl font-semibold hidden md:flex">
-                                                                      {userRole && userRole ? "Admin" : "User"} Panel
+                                                                      ({userRole && userRole ? "Admin" : "User"} Panel)
                                                             </h1>
                                                   </div>
                                                   <div className="dropdown dropdown-end">
