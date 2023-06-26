@@ -118,11 +118,9 @@ export default function Note() {
 
           if (loading) {
                     return (
-
-
                               <main className="h-screen select-none flex flex-col justify-center items-center">
                                         <h1 className="text-9xl font-extrabold tracking-widest">404</h1>
-                                        <div className="bg-[#FF6A3D] text-white px-2 text-sm rounded rotate-12 absolute">
+                                        <div className="bg-gradient-to-bl md:bg-gradient-to-tl from-[#cf9aff] to-[#95c0ff] glass text-white px-2 text-sm rounded rotate-12 absolute">
                                                   Sorry, Link is invalid
                                         </div>
                                         <Link to="/">
@@ -171,7 +169,7 @@ export default function Note() {
                                                                                 readOnly
                                                                                 value={note?.content}
                                                                       />
-                                                                      <div className='flex justify-start items-center gap-1 mt-1.5'>
+                                                                      <div className='flex justify-start items-center gap-1'>
                                                                                 <span className='tooltip' data-tip="Copy Note">
                                                                                           <button
                                                                                                     className="glass bg-gradient-to-tl md:bg-gradient-to-br from-[#cf9aff] to-[#95c0ff] text-white py-3 px-4 rounded-xl rounded-tl-none rounded-tr-none rounded-br-none uppercase font-semibold -mt-1 focus:outline-none focus:shadow-outline"

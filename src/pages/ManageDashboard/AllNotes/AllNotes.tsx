@@ -113,7 +113,7 @@ export default function AllNotes() {
                                         </button>
                               </div>
                               <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5'>
-                                        {allNotes?.map((note: any) => (
+                                        {allNotes?.slice().reverse()?.map((note: any) => (
                                                   <div className="mb-4">
                                                             <div className="flex justify-end items-center text-end">
                                                                       <span className={`text-white select-none glass rounded-tl-3xl rounded-tr-xl p-2 text-xs mb-[.15rem]`}>
@@ -132,7 +132,7 @@ export default function AllNotes() {
                                                                       onContextMenu={(e) => e.preventDefault()}
                                                                       onDoubleClick={(e) => e.preventDefault()}
                                                                       readOnly
-                                                                      value={note?.content}
+                                                                      value={note?.content ? note?.content : "No content found!"}
                                                             />
                                                             <div className='flex justify-start items-center gap-1 mt-1.5'>
                                                                       <span className='tooltip' data-tip="Copy Note">

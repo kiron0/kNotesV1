@@ -404,13 +404,13 @@ export default function Notes() {
       </Link>
       <div className="flex md:justify-center items-center my-6 md:my-10 gap-3">
         <button
-          className="glass uppercase font-semibold bg-gradient-to-bl md:bg-gradient-to-tl from-[#cf9aff] to-[#95c0ff] text-white py-2 px-4 rounded-xl focus:outline-none focus:shadow-outline"
+          className="glass uppercase font-semibold bg-gradient-to-br md:bg-gradient-to-tl from-[#cf9aff] to-[#95c0ff] text-white py-2 px-4 rounded-xl focus:outline-none focus:shadow-outline"
           onClick={handleAddNote}
         >
           Add Note
         </button>
         <label htmlFor="settingModal" className='cursor-pointer'>
-          <p className="glass bg-gradient-to-tr md:bg-gradient-to-bl from-[#cf9aff] to-[#95c0ff] text-white py-3 px-4 rounded-xl uppercase font-semibold -mt-1 focus:outline-none focus:shadow-outline">
+          <p className="glass bg-gradient-to-tl md:bg-gradient-to-br from-[#cf9aff] to-[#95c0ff] text-white py-3 px-4 rounded-xl uppercase font-semibold -mt-1 focus:outline-none focus:shadow-outline">
             <AiOutlineSetting />
           </p>
         </label>
@@ -468,7 +468,7 @@ export default function Notes() {
               </span>
               <span className='tooltip' data-tip="Share Note">
                 <button
-                  className="glass bg-gradient-to-br md:bg-gradient-to-tl to-[#95c0ff] from-[#cf9aff] text-white py-3 px-4 rounded-xl rounded-tl-none rounded-tr-none rounded-bl-none uppercase font-semibold -mt-1 focus:outline-none focus:shadow-outline"
+                  className="glass bg-gradient-to-tl md:bg-gradient-to-br to-[#95c0ff] from-[#cf9aff] text-white py-3 px-4 rounded-xl rounded-tl-none rounded-tr-none rounded-bl-none uppercase font-semibold -mt-1 focus:outline-none focus:shadow-outline"
                   onClick={() => handleShareNote(note.id)}>
                   <FiShare2 />
                 </button>

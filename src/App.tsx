@@ -1,10 +1,9 @@
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useEffect } from 'react';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import NotFound from './shared/NotFound/NotFound';
 import { Toaster } from 'react-hot-toast';
 import Root from './Layouts/Root';
 import Note from './pages/Note/Note';
-import Preloader from './shared/Preloader/Preloader';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { BASE_API } from './config';
@@ -65,15 +64,6 @@ const router = createBrowserRouter([
 export const InitializeContext = createContext(null as any);
 
 function App() {
-  const [loading, setLoading] = useState<boolean>(false);
-
-  useEffect(() => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 2000);
-  }, []);
-
   useEffect(() => {
     document.addEventListener("contextmenu", (e) => {
       e.preventDefault();
@@ -89,17 +79,8 @@ function App() {
 
   return (
     <InitializeContext.Provider value={{ appName, refetch }}>
-      {
-        loading ? (
-          <Preloader />
-        ) :
-          (
-            <>
-              <RouterProvider router={router} />
-              <Toaster />
-            </>
-          )
-      }
+      <RouterProvider router={router} />
+      <Toaster />
     </InitializeContext.Provider>
   );
 }
