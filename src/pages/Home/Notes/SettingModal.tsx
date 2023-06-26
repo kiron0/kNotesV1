@@ -1,33 +1,13 @@
 import React from 'react'
 
 export default function SettingModal({ setting, handleFontSize, handleFontWeight, handleFontColor, handleShowCharWord }: any) {
-          const handleReset = (e: any) => {
-                    e.preventDefault();
-                    handleFontSize('14')
-                    handleFontWeight('normal')
-                    handleFontColor('black')
-                    handleShowCharWord('true')
-
-                    const selectFontSize = document.getElementById('selectFontSize') as HTMLSelectElement
-                    selectFontSize.value = '14'
-                    const selectFontWeight = document.getElementById('selectFontWeight') as HTMLSelectElement
-                    selectFontWeight.value = 'normal'
-                    const selectFontColor = document.getElementById('selectFontColor') as HTMLSelectElement
-                    selectFontColor.value = 'black'
-                    const showCharWord = document.getElementById('showCharWord') as HTMLSelectElement
-                    showCharWord.value = 'true'
-
-                    const updatedSetting = { ...setting, fontSize: '14', fontWeight: 'normal', fontColor: 'black', showCharWord: 'true' };
-                    localStorage.setItem('kNotesSetting', JSON.stringify(updatedSetting));
-          }
-
           return (
-                    <div>
+                    <div className=''>
                               <input type="checkbox" id="settingModal" className="modal-toggle" />
                               <div className="modal modal-bottom sm:modal-middle">
-                                        <div className="modal-box">
-                                                  <h3 className="font-bold text-lg">Setting</h3>
-                                                  <form onSubmit={handleReset}>
+                                        <div className="modal-box bg-gradient-to-br from-[#cf9aff] to-[#95c0ff]">
+                                                  <h3 className="font-bold text-lg text-white">Setting</h3>
+                                                  <div>
                                                             <div className='mt-5 glass rounded-xl p-1'>
                                                                       <label className="label">
                                                                                 <span className="label-text-alt">Font Size</span>
@@ -70,13 +50,13 @@ export default function SettingModal({ setting, handleFontSize, handleFontWeight
                                                                                 <span className="label-text-alt">Font Color</span>
                                                                       </label>
                                                                       <select id='selectFontColor' className="select focus:outline-none w-full"
-                                                                                defaultValue={setting.fontColor ? setting.fontColor : ''}
+                                                                                defaultValue={setting.fontColor ? setting.fontColor : 'black'}
                                                                                 onChange={(e) => {
                                                                                           handleFontColor(e.target.value)
                                                                                 }
                                                                                 }
                                                                       >
-                                                                                <option value={'black'}>Default</option>
+                                                                                <option value={'black'}>Black</option>
                                                                                 <option value={'white'}>White</option>
                                                                       </select>
                                                             </div>
@@ -95,8 +75,7 @@ export default function SettingModal({ setting, handleFontSize, handleFontWeight
                                                                                 <option value={'false'}>No</option>
                                                                       </select>
                                                             </div>
-                                                            {/* <button className='mt-5 flex mx-auto btn btn-sm'>Reset Preferences</button> */}
-                                                  </form>
+                                                  </div>
                                                   <div className="modal-action">
                                                             <label htmlFor="settingModal" className="btn btn-sm">Close!</label>
                                                   </div>

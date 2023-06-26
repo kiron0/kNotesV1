@@ -1,24 +1,40 @@
-import React, { useState, useEffect } from 'react'
-import NoteImg from '../../assets/notes.png'
+import React, { useState, useEffect, useContext } from 'react'
+import NoteImg from '../../../assets/notes.png'
 import { FiTrash, FiDownload, FiClipboard, FiShare2 } from 'react-icons/fi'
 import { RxReset } from 'react-icons/rx'
 import { AiOutlineSetting } from 'react-icons/ai'
 import Swal from 'sweetalert2';
 import { toast } from 'react-hot-toast';
-import { Link } from 'react-router-dom';
-import { appName } from '../../AppName';
+import { Link, NavLink } from 'react-router-dom';
 import SettingModal from './SettingModal'
+import axios from 'axios';
+import { nanoid } from 'nanoid';
+import { BASE_API } from '../../../config'
+import { InitializeContext } from '../../../App'
+import { signOut } from 'firebase/auth'
+import auth from '../../../auth/Firebase/firebase.init'
+import { useAuthState } from 'react-firebase-hooks/auth'
 
 export default function Notes() {
+  const { appName } = useContext(InitializeContext);
+  const [user] = useAuthState(auth);
   const [notes, setNotes] = useState(localStorage.getItem('kNotes') ? JSON.parse(localStorage.getItem('kNotes') as any) : []);
   const [setting, setSetting] = useState(localStorage.getItem('kNotesSetting') ? JSON.parse(localStorage.getItem('kNotesSetting') as any) : {
     showCharWord: 'true',
   });
 
+  const updateNote = (id: any) => {
+    axios.patch(`${BASE_API}/note?id=${id}`, {
+      content: notes.find((note: any) => note.id === id).content,
+      wordCount: notes.find((note: any) => note.id === id).wordCount,
+      characterCount: notes.find((note: any) => note.id === id).characterCount,
+    })
+  }
+
   useEffect(() => {
     if (notes.length === 0) {
       const newNote = {
-        id: "kNotes-" + Date.now() + "" + Math.floor(Math.random() * 78),
+        id: nanoid(20),
         content: '',
         wordCount: 0,
         characterCount: 0,
@@ -28,8 +44,9 @@ export default function Notes() {
       const newNotes = [...notes, newNote];
       setNotes(newNotes);
       localStorage.setItem('kNotes', JSON.stringify(newNotes));
+      axios.post(`${BASE_API}/notes`, newNote);
     }
-  }, [notes]);
+  }, [notes, appName]);
 
   const handleDownload = (id: any) => {
     const text = notes.find((note: any) => note.id === id).content;
@@ -38,6 +55,7 @@ export default function Notes() {
         position: 'top-right',
       })
     } else {
+      updateNote(id);
       const blob = new Blob([text], { type: 'text/plain' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -56,20 +74,13 @@ export default function Notes() {
         position: 'top-right',
       })
     } else {
+      updateNote(id);
       navigator.clipboard.writeText(text);
       toast.success('Note Copied to clipboard!', {
         position: 'top-right',
       })
     }
   };
-
-  // let timer = 1000,
-  //   timeout: any;
-
-  // const debounce = (func: Function) => {
-  //   clearTimeout(timeout);
-  //   timeout = setTimeout(func, timer);
-  // };
 
   const formatDate = (value: any) => {
     if (!value) return "";
@@ -123,7 +134,7 @@ export default function Notes() {
 
   const handleAddNote = () => {
     const newNote = {
-      id: "kNotes-" + Date.now() + "" + Math.floor(Math.random() * 78),
+      id: nanoid(20),
       content: '',
       wordCount: 0,
       characterCount: 0,
@@ -136,6 +147,7 @@ export default function Notes() {
       position: 'top-right',
     });
     localStorage.setItem('kNotes', JSON.stringify(newNotes));
+    axios.post(`${BASE_API}/notes`, newNote);
   };
 
   const handleDeleteNote = (id: any) => {
@@ -146,24 +158,23 @@ export default function Notes() {
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Yes, delete it!'
-    }).then((result) => {
+    }).then((result: any) => {
       if (result.isConfirmed) {
         const updatedNotes = notes.filter((note: any) => note.id !== id);
         setNotes(updatedNotes);
-
         if (notes.length === 1) {
           localStorage.removeItem('kNotes');
         } else {
           localStorage.setItem('kNotes', JSON.stringify(updatedNotes));
         }
-
+        axios.delete(`${BASE_API}/note?id=${id}`);
         Swal.fire({
           title: 'Deleted!',
           text: 'Your note has been deleted.',
           icon: 'success',
           timer: 1000,
           showConfirmButton: false,
-        })
+        });
       }
     }
     )
@@ -182,7 +193,7 @@ export default function Notes() {
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Yes, clear it!'
-      }).then((result) => {
+      }).then((result: any) => {
         if (result.isConfirmed) {
           const updatedNotes = notes.map((note: any) => {
             if (note.id === id) {
@@ -192,6 +203,7 @@ export default function Notes() {
             }
             return note;
           });
+          updateNote(id);
           setNotes(updatedNotes);
           localStorage.setItem('kNotes', JSON.stringify(updatedNotes));
           toast.success('Note cleared!', {
@@ -219,9 +231,7 @@ export default function Notes() {
     );
 
     setNotes(updatedNotes);
-    // debounce(() => {
     localStorage.setItem('kNotes', JSON.stringify(updatedNotes));
-    // });
   };
 
   const handleFontSize = (size: any) => {
@@ -253,7 +263,12 @@ export default function Notes() {
   }
 
   const handleShareNote = (id: any) => {
-    const slug = id.split('-')[1];
+    if (notes.find((note: any) => note.id === id).content === '') {
+      return toast.error('Nothing to share!', {
+        position: 'top-right',
+      })
+    }
+    const slug = id;
     const shareUrl = window.location.href + 'note/' + slug;
     Swal.fire({
       text: 'Share this note?',
@@ -261,9 +276,16 @@ export default function Notes() {
       showCancelButton: true,
       confirmButtonText: 'Copy Link',
       cancelButtonText: 'Cancel',
-    }).then((result) => {
+    }).then((result: any) => {
       if (result.isConfirmed) {
-        navigator.clipboard.writeText(shareUrl);
+        updateNote(id);
+        if (!navigator.clipboard) {
+          return toast.error('Clipboard not supported!', {
+            position: 'top-center',
+          })
+        } else {
+          navigator.clipboard.writeText(shareUrl);
+        }
         Swal.fire({
           title: 'Copied!',
           text: 'Shareable link copied to clipboard.',
@@ -275,8 +297,108 @@ export default function Notes() {
     })
   }
 
+  const handleLogOut = () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You will be signed out from this account.",
+      icon: "warning",
+      showCancelButton: true,
+      background: "#fff",
+      color: "#333",
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, sign out!",
+    }).then((result: any) => {
+      if (result.isConfirmed) {
+        // sign out from firebase
+        signOut(auth).then(() => {
+          localStorage.removeItem("accessToken");
+          toast.success(`Thank you, ${user?.displayName} to stay with us!`, {
+            position: "top-center",
+          });
+        }).catch((err) => {
+          // toast for error
+          toast(err.message, {
+            icon: '👎',
+          })
+        })
+      }
+    })
+  };
+
   return (
     <div className="lg:container px-8 mx-auto py-8">
+      {user && (
+        <div className="flex justify-center items-center fixed top-4 right-4 rounded-xl px-1 lg:px-2 lg:py-1 z-50 glass bg-gradient-to-tl from-[#cf9aff] to-[#95c0ff]">
+          <div className="flex justify-center items-center gap-2">
+            <h2 className="text-white text-sm md:text-md">Hi, {auth?.currentUser?.displayName?.split(' ').slice(0, -1).join(' ')}!</h2>
+            <div className="dropdown dropdown-end">
+              <label
+                tabIndex={0}
+                className="btn btn-ghost btn-circle avatar"
+              >
+                <div
+                  style={{ display: "grid" }}
+                  className="w-8 h-8 lg:w-10 lg:h-10 rounded-full border bg-base-300 grid place-items-center ring ring-primary ring-offset-base-100 ring-offset-2"
+                >
+                  <img
+                    src={auth?.currentUser?.photoURL as string}
+                    alt="profile"
+                    className="w-full h-full rounded-full"
+                  />
+                </div>
+              </label>
+              <ul
+                tabIndex={0}
+                className="mt-3 p-2 shadow-xl menu menu-compact dropdown-content glass bg-gradient-to-br from-[#cf9aff] to-[#95c0ff] text-white rounded-box w-72"
+              >
+                <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto my-4 border ring ring-primary ring-offset-base-100 ring-offset-2">
+                  <img
+                    src={auth?.currentUser?.photoURL as string}
+                    alt="profile"
+                    className="w-full h-full rounded-full"
+                  />
+                </div>
+                <div className="text-center mb-4">
+                  <h2 className="font-semibold text-lg">
+                    {auth?.currentUser?.displayName}
+                  </h2>
+
+                  <p className="text-xs">
+                    User ID: <span className="font-semibold">USER-{auth?.currentUser?.uid?.slice(0, 6)}</span>
+                  </p>
+                </div>
+                <hr className="font-semibold" />
+                {
+                  user.email === "toufiqhasankiron2@gmail.com" && (
+                    <>
+                      <li className="py-1 font-semibold">
+                        <NavLink
+                          className={({ isActive }) =>
+                            isActive ? "text-white bg-primary" : ""
+                          }
+                          to="/adminDash"
+                        >
+                          <i className="bx bxs-dashboard"></i> Dashboard
+                        </NavLink>
+                      </li>
+                    </>
+                  )
+                }
+                <li className="py-1">
+                  <button
+                    onClick={handleLogOut}
+                    className="font-semibold text-red-500"
+                  >
+                    <i className="bx bx-log-out font-semibold"></i>
+                    Sign Out
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
       <Link to="/">
         <h1 className="text-2xl md:text-4xl lg:text-5xl select-none font-bold mb-4 text-center text-white flex md:justify-center items-center gap-1"><img src={NoteImg} className='w-10 md:w-12' alt="" />{appName}</h1>
       </Link>

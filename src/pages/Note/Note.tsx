@@ -1,29 +1,38 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import NoteImg from '../../assets/notes.png'
 import { Link, useParams } from 'react-router-dom';
-import { appName } from '../../AppName';
 import Footer from '../../shared/Footer/Footer';
+import axios from 'axios';
+import { BASE_API } from '../../config';
+import { FiClipboard, FiDownload } from 'react-icons/fi';
+import { toast } from 'react-hot-toast';
+import { InitializeContext } from '../../App';
 
 export default function Note() {
           const { id } = useParams();
+          const { appName } = useContext(InitializeContext);
           const [note, setNote] = useState({} as any);
           const [loading, setLoading] = useState<boolean>(false);
 
           useEffect(() => {
-                    if (id?.length !== 15) return setLoading(true);
-                    if (isNaN(Number(id))) return setLoading(true);
-                    const notes = JSON.parse(localStorage.getItem('kNotes') || '[]');
-                    const note = notes.find((note: any) => note.id === `kNotes-${id}`);
-                    if (!note) return setLoading(true);
-                    if (note.content === undefined) return setLoading(true);
-                    setNote(note);
-                    setLoading(false);
+                    if (id?.length !== 20) return setLoading(true);
+                    axios.get(`${BASE_API}/note?id=${id}`)
+                              .then(res => {
+                                        const note = res.data;
+                                        if (note.content === undefined) return setLoading(true);
+                                        if (id?.length === 20 && note.content === '') return setLoading(true)
+                                        setNote(note);
+                                        setLoading(false);
+                              }).catch(err => {
+                                        setLoading(true);
+                                        console.log(err);
+                              })
           }, [id]);
 
           useEffect(() => {
                     const title = note.content?.slice(0, 15);
-                    document.title = `${title ? title : 'Untitled'} - ${appName} Web App`;
-          }, [note]);
+                    document.title = `${title ? title : 'Untitled'} - ${appName} | Notepad Web App`;
+          }, [note, appName]);
 
           const formatDate = (value: any) => {
                     if (!value) return "";
@@ -75,6 +84,38 @@ export default function Note() {
                     return `${hrs}:${min}:${sec} ${amPm}, ${dayName} ${day} ${month} ${year}`;
           };
 
+          const handleDownload = () => {
+                    const text = note.content;
+                    if (text === '') {
+                              return toast.error('Nothing to download!', {
+                                        position: 'top-right',
+                              })
+                    } else {
+                              const blob = new Blob([text], { type: 'text/plain' });
+                              const url = URL.createObjectURL(blob);
+                              const link = document.createElement('a');
+                              link.href = url;
+                              link.download = `KNotes-${text.slice(0, 10)}.txt`;
+                              link.click();
+                              URL.revokeObjectURL(url);
+                              link.remove();
+                    }
+          };
+
+          const handleCopyToClipboard = () => {
+                    const text = note.content;
+                    if (text === '') {
+                              return toast.error('Nothing to copy!', {
+                                        position: 'top-right',
+                              })
+                    } else {
+                              navigator.clipboard.writeText(text);
+                              toast.success('Note Copied to clipboard!', {
+                                        position: 'top-right',
+                              })
+                    }
+          };
+
           if (loading) {
                     return (
 
@@ -106,7 +147,7 @@ export default function Note() {
 
                                                             >
                                                                       Thanks for using {appName}! <br />
-                                                                      & <span className='font-bold'>Thanks for sharing with your friends!</span>
+                                                                      & <span className='font-bold'>Thanks for sharing this with your friends!</span>
                                                             </button>
                                                   </div>
                                                   <div className='w-full md:w-1/2 lg:w-1/3 mx-auto pt-8 md:pt-20'>
@@ -116,12 +157,36 @@ export default function Note() {
                                                                                           {formatDate(note?.time)} <br /> {note?.characterCount} character(s), {note?.wordCount} word(s)
                                                                                 </span>
                                                                       </div>
-                                                                      <textarea
-                                                                                className={`textarea focus:outline-none rounded-tl-xl rounded-br-xl rounded-bl-xl placeholder:text-white glass rounded-none p-4 w-full disabled select-none hide-cursor`}
+                                                                      <textarea className={`textarea focus:outline-none rounded-tl-xl h-[250px] rounded-br-xl rounded-bl-none glass rounded-none p-3 w-full select-none cursor-not-allowed hide-cursor`}
                                                                                 style={{ minHeight: "250px", resize: "none" }}
-                                                                                defaultValue={note?.content}
-                                                                                placeholder="Type your note here..."
+                                                                                onMouseDown={(e) => {
+                                                                                          e.preventDefault()
+                                                                                          toast.error("You can't copy text!", {
+                                                                                                    position: 'bottom-right',
+                                                                                          })
+                                                                                }}
+                                                                                onSelect={(e) => e.preventDefault()}
+                                                                                onContextMenu={(e) => e.preventDefault()}
+                                                                                onDoubleClick={(e) => e.preventDefault()}
+                                                                                readOnly
+                                                                                value={note?.content}
                                                                       />
+                                                                      <div className='flex justify-start items-center gap-1 mt-1.5'>
+                                                                                <span className='tooltip' data-tip="Copy Note">
+                                                                                          <button
+                                                                                                    className="glass bg-gradient-to-tl md:bg-gradient-to-br from-[#cf9aff] to-[#95c0ff] text-white py-3 px-4 rounded-xl rounded-tl-none rounded-tr-none rounded-br-none uppercase font-semibold -mt-1 focus:outline-none focus:shadow-outline"
+                                                                                                    onClick={handleCopyToClipboard}>
+                                                                                                    <FiClipboard />
+                                                                                          </button>
+                                                                                </span>
+                                                                                <span className='tooltip' data-tip="Download Note">
+                                                                                          <button
+                                                                                                    className="glass bg-gradient-to-br md:bg-gradient-to-tl to-[#95c0ff] from-[#cf9aff] text-white py-3 px-4 rounded-xl rounded-tl-none rounded-tr-none rounded-bl-none uppercase font-semibold -mt-1 focus:outline-none focus:shadow-outline"
+                                                                                                    onClick={handleDownload}>
+                                                                                                    <FiDownload />
+                                                                                          </button>
+                                                                                </span>
+                                                                      </div>
                                                             </div>
                                                   </div>
                                         </div>

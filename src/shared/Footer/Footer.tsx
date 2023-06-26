@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { BsGithub, BsLinkedin, BsTwitter } from 'react-icons/bs';
-import { appName } from '../../AppName';
 import { toast } from 'react-hot-toast';
+import { InitializeContext } from '../../App';
 
 export default function Footer() {
+          const { appName } = useContext(InitializeContext);
           const handleWorkingOnFeature = () => {
                     return toast.error('Working on this feature. Please wait for the next update.')
           }

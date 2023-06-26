@@ -29,5 +29,11 @@ body {
   caret-color: transparent; /* Hides the cursor color */
   color: transparent; /* Hides the text color */
   text-shadow: 0 0 0 black; /* Hides the cursor shadow */
-  cursor: not-allowed;
+  cursor: not-allowed; /* Disables the cursor */
+  user-select: none !important; /* Disable text selection */
+  -moz-user-select: none; /* Firefox */
+  -webkit-user-select: none; /* Safari 3.1+ */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  -webkit-touch-callout: none; /* iOS Safari */
 }
