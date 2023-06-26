@@ -1,13 +1,12 @@
-import { useEffect, useState, useContext } from "react";
-import { InitializeContext } from "../App";
+import { useEffect, useState } from "react";
+import { AppName } from "../AppName";
 
 const useTitle = (titleText: string) => {
-  const { appName } = useContext(InitializeContext);
   const [title, setTitle] = useState("");
   useEffect(() => {
-    document.title = titleText + " - " + appName + " | Notepad Web App";
+    document.title = titleText + " - " + AppName + " | Notepad Web App";
     setTitle(titleText);
-  }, [titleText, appName]);
+  }, [titleText]);
   return [title];
 };
 

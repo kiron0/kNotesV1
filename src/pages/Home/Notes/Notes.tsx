@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect } from 'react'
 import NoteImg from '../../../assets/notes.png'
 import { FiTrash, FiDownload, FiClipboard, FiShare2 } from 'react-icons/fi'
 import { RxReset } from 'react-icons/rx'
@@ -10,13 +10,12 @@ import SettingModal from './SettingModal'
 import axios from 'axios';
 import { nanoid } from 'nanoid';
 import { BASE_API } from '../../../config'
-import { InitializeContext } from '../../../App'
 import { signOut } from 'firebase/auth'
 import auth from '../../../auth/Firebase/firebase.init'
 import { useAuthState } from 'react-firebase-hooks/auth'
+import { AppName } from '../../../AppName'
 
 export default function Notes() {
-  const { appName } = useContext(InitializeContext);
   const [user] = useAuthState(auth);
   const [notes, setNotes] = useState(localStorage.getItem('kNotes') ? JSON.parse(localStorage.getItem('kNotes') as any) : []);
   const [setting, setSetting] = useState(localStorage.getItem('kNotesSetting') ? JSON.parse(localStorage.getItem('kNotesSetting') as any) : {
@@ -39,14 +38,14 @@ export default function Notes() {
         wordCount: 0,
         characterCount: 0,
         time: Date.now(),
-        author: appName,
+        author: AppName,
       };
       const newNotes = [...notes, newNote];
       setNotes(newNotes);
       localStorage.setItem('kNotes', JSON.stringify(newNotes));
       axios.post(`${BASE_API}/notes`, newNote);
     }
-  }, [notes, appName]);
+  }, [notes]);
 
   const handleDownload = (id: any) => {
     const text = notes.find((note: any) => note.id === id).content;
@@ -139,7 +138,7 @@ export default function Notes() {
       wordCount: 0,
       characterCount: 0,
       time: Date.now(),
-      author: appName,
+      author: AppName,
     };
     const newNotes = [...notes, newNote];
     setNotes(newNotes);
@@ -310,7 +309,6 @@ export default function Notes() {
       confirmButtonText: "Yes, sign out!",
     }).then((result: any) => {
       if (result.isConfirmed) {
-        // sign out from firebase
         signOut(auth).then(() => {
           localStorage.removeItem("accessToken");
           toast.success(`Thank you, ${user?.displayName} to stay with us!`, {
@@ -382,6 +380,16 @@ export default function Notes() {
                           <i className="bx bxs-dashboard"></i> Dashboard
                         </NavLink>
                       </li>
+                      <li className="py-1 font-semibold">
+                        <NavLink
+                          className={({ isActive }) =>
+                            isActive ? "text-white bg-primary" : ""
+                          }
+                          to="/adminDash/allNotes"
+                        >
+                          <img src={NoteImg} className='w-4' alt="" /> All Notes
+                        </NavLink>
+                      </li>
                     </>
                   )
                 }
@@ -400,7 +408,7 @@ export default function Notes() {
         </div>
       )}
       <Link to="/">
-        <h1 className="text-2xl md:text-4xl lg:text-5xl select-none font-bold mb-4 text-center text-white flex md:justify-center items-center gap-1"><img src={NoteImg} className='w-10 md:w-12' alt="" />{appName}</h1>
+        <h1 className="text-2xl md:text-4xl lg:text-5xl select-none font-bold mb-4 text-center text-white flex md:justify-center items-center gap-1"><img src={NoteImg} className='w-10 md:w-12' alt="" />{AppName}</h1>
       </Link>
       <div className="flex md:justify-center items-center my-6 md:my-10 gap-3">
         <button

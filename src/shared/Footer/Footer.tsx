@@ -1,17 +1,16 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { BsGithub, BsLinkedin, BsTwitter } from 'react-icons/bs';
 import { toast } from 'react-hot-toast';
-import { InitializeContext } from '../../App';
+import { AppName } from '../../AppName';
 
 export default function Footer() {
-          const { appName } = useContext(InitializeContext);
           const handleWorkingOnFeature = () => {
                     return toast.error('Working on this feature. Please wait for the next update.')
           }
           return (
                     <div className="mx-auto text-white py-10 md:pt-16">
                               <div className="text-center">
-                                        <h3 className="text-3xl mb-3 font-bold">{appName}</h3>
+                                        <h3 className="text-3xl mb-3 font-bold">{AppName}</h3>
                                         <p>A Notepad Web App</p>
                                         <div className="flex justify-center items-center gap-5 mt-6">
                                                   <a href='https://twitter.com/hashtagkiron' target='_blank' rel="noopener noreferrer" className="bg-white hover:bg-transparent hover:border duration-300 shadow-lg font-normal h-10 w-10 flex items-center justify-center rounded-full outline-none focus:outline-none" type="button">
@@ -33,7 +32,7 @@ export default function Footer() {
                               </div>
 
                               <div className='flex flex-col justify-center items-center pt-6'>
-                                        <p className='text-xs md:text-sm'>Copyright &copy; {new Date().getFullYear()} <span className='font-bold'>{appName}</span> - All Rights reserved.</p>
+                                        <p className='text-xs md:text-sm'>Copyright &copy; {new Date().getFullYear()} <span className='font-bold'>{AppName}</span> - All Rights reserved.</p>
                                         <p className='text-xs'>Developed by <a href="https://kiron.dev" target="_blank" rel="noopener noreferrer"><span className='text-primary font-bold hover:text-white duration-500'>Toufiq Hasan Kiron</span></a></p>
                               </div>
                     </div>

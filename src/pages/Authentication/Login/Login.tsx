@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useSignInWithGoogle } from "react-firebase-hooks/auth";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-hot-toast";
@@ -7,13 +7,12 @@ import auth from "../../../auth/Firebase/firebase.init";
 import useTitle from "../../../hooks/useTitle";
 import useScrollToTop from "../../../hooks/useScrollToTop";
 import { BiHomeHeart } from "react-icons/bi";
-import { InitializeContext } from "../../../App";
 import { ScaleLoader } from "react-spinners";
+import { AppName } from "../../../AppName";
 
 const Login = () => {
   useScrollToTop();
   useTitle("Get Started");
-  const { appName } = useContext(InitializeContext);
   const [signInWithGoogle, gUser, gLoading] = useSignInWithGoogle(auth);
   const [token] = useToken(gUser);
   const navigate = useNavigate();
@@ -23,9 +22,9 @@ const Login = () => {
   useEffect(() => {
     if (token || from === "/getStarted" || auth?.currentUser?.email) {
       navigate(from, { replace: true });
-      toast.success(`Welcome to ${appName} | Keep Notes Safe, ${auth?.currentUser?.displayName}`);
+      toast.success(`Welcome to ${AppName} | Keep Notes Safe, ${auth?.currentUser?.displayName}`);
     }
-  }, [token, navigate, from, appName]);
+  }, [token, navigate, from]);
 
   if (gLoading) {
     return (

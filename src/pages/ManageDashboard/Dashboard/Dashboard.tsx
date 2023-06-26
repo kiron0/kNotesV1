@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import { toast } from "react-hot-toast";
 import LOGO from "../../../assets/notes.png";
 import { signOut } from "firebase/auth";
@@ -7,12 +7,11 @@ import { MdSpaceDashboard } from "react-icons/md";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import useUserRole from "../../../hooks/useUserRole";
 import auth from "../../../auth/Firebase/firebase.init";
-import { InitializeContext } from "../../../App";
 import Loading from "../../../components/Loading/Loading";
 import Swal from "sweetalert2";
+import { AppName } from "../../../AppName";
 
 const Dashboard: any = () => {
-          const { appName } = useContext(InitializeContext);
           const [user, isLoading] = useAuthState(auth);
           const [userRole, adminLoading] = useUserRole(user);
           const navigate = useNavigate();
@@ -69,7 +68,7 @@ const Dashboard: any = () => {
                                                                       to="/"
                                                                       className="text-xl md:text-2xl font-semibold md:text-primary"
                                                             >
-                                                                      {appName} <span className="text-xs md:hidden"> - Notepad Web App</span>
+                                                                      {AppName} <span className="text-xs md:hidden"> - Notepad Web App</span>
                                                             </Link>
                                                             <h1 className="text-lg md:text-2xl font-semibold hidden md:flex">
                                                                       ({userRole && userRole ? "Admin" : "User"} Panel)
@@ -112,7 +111,7 @@ const Dashboard: any = () => {
                                                                                           <h1 className="font-semibold">
                                                                                                     Welcome to,{" "}
                                                                                                     <span className="font-semibold text-primary">
-                                                                                                              <Link to="/">{appName}</Link>
+                                                                                                              <Link to="/">{AppName}</Link>
                                                                                                     </span>
                                                                                           </h1>
                                                                                           <h1 className="font-semibold">
@@ -140,7 +139,7 @@ const Dashboard: any = () => {
                                                                       to="/"
                                                                       className="logo font-semibold text-center flex items-center flex-col gap-2 text-white"
                                                             >
-                                                                      <img src={LOGO} alt="" className="w-16" /> {appName}
+                                                                      <img src={LOGO} alt="" className="w-16" /> {AppName}
                                                             </Link>
                                                   </div>
                                                   <li className="py-2 mt-4">

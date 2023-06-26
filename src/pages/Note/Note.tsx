@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect } from 'react'
 import NoteImg from '../../assets/notes.png'
 import { Link, useParams } from 'react-router-dom';
 import Footer from '../../shared/Footer/Footer';
@@ -6,11 +6,10 @@ import axios from 'axios';
 import { BASE_API } from '../../config';
 import { FiClipboard, FiDownload } from 'react-icons/fi';
 import { toast } from 'react-hot-toast';
-import { InitializeContext } from '../../App';
+import { AppName } from '../../AppName';
 
 export default function Note() {
           const { id } = useParams();
-          const { appName } = useContext(InitializeContext);
           const [note, setNote] = useState({} as any);
           const [loading, setLoading] = useState<boolean>(false);
 
@@ -31,8 +30,8 @@ export default function Note() {
 
           useEffect(() => {
                     const title = note.content?.slice(0, 15);
-                    document.title = `${title ? title : 'Untitled'} - ${appName} | Notepad Web App`;
-          }, [note, appName]);
+                    document.title = `${title ? title : 'Untitled'} - ${AppName} | Notepad Web App`;
+          }, [note]);
 
           const formatDate = (value: any) => {
                     if (!value) return "";
@@ -137,24 +136,28 @@ export default function Note() {
                               <>
                                         <div className="lg:container px-8 mx-auto py-8">
                                                   <Link to="/">
-                                                            <h1 className="text-2xl md:text-4xl lg:text-5xl select-none font-bold mb-4 text-center text-white flex md:justify-center items-center gap-1"><img src={NoteImg} className='w-10 md:w-12' alt="" />{appName}</h1>
+                                                            <h1 className="text-2xl md:text-4xl lg:text-5xl select-none font-bold mb-4 text-center text-white flex md:justify-center items-center gap-1"><img src={NoteImg} className='w-10 md:w-12' alt="" />{AppName}</h1>
                                                   </Link>
                                                   <div className='flex justify-center items-center pt-5'>
                                                             <button
                                                                       className="text-sm md:text-md glass uppercase cursor-default no-animation font-semibold bg-gradient-to-bl md:bg-gradient-to-tl from-[#cf9aff] to-[#95c0ff] text-white py-2 px-4 rounded-xl focus:outline-none focus:shadow-outline"
 
                                                             >
-                                                                      Thanks for using {appName}! <br />
+                                                                      Thanks for using {AppName}! <br />
                                                                       & <span className='font-bold'>Thanks for sharing this with your friends!</span>
                                                             </button>
                                                   </div>
                                                   <div className='w-full md:w-1/2 lg:w-1/3 mx-auto pt-8 md:pt-20'>
                                                             <div className="mb-4">
-                                                                      <div className="flex justify-end items-center text-end">
-                                                                                <span className={`text-white select-none glass rounded-tl-3xl rounded-tr-xl p-2 text-xs mb-[.15rem]`}>
-                                                                                          {formatDate(note?.time)} <br /> {note?.characterCount} character(s), {note?.wordCount} word(s)
-                                                                                </span>
-                                                                      </div>
+                                                                      {
+                                                                                note?.time && (
+                                                                                          <div className="flex justify-end items-center text-end">
+                                                                                                    <span className={`text-white select-none glass rounded-tl-3xl rounded-tr-xl p-2 text-xs mb-[.15rem]`}>
+                                                                                                              {formatDate(note?.time)} <br /> {note?.characterCount} character(s), {note?.wordCount} word(s)
+                                                                                                    </span>
+                                                                                          </div>
+                                                                                )
+                                                                      }
                                                                       <textarea className={`textarea focus:outline-none rounded-tl-xl h-[250px] rounded-br-xl rounded-bl-none glass rounded-none p-3 w-full select-none cursor-not-allowed hide-cursor`}
                                                                                 style={{ minHeight: "250px", resize: "none" }}
                                                                                 onMouseDown={(e) => {
