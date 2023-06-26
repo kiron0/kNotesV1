@@ -146,20 +146,37 @@ export default function AllNotes() {
                                                                                 </div>
                                                                       )
                                                             }
-                                                            <textarea className={`textarea focus:outline-none rounded-tl-xl h-[250px] ${note?.content === '' && 'text-xl'} rounded-br-xl rounded-bl-none glass rounded-none p-3 w-full select-none cursor-not-allowed hide-cursor`}
-                                                                      style={{ minHeight: "250px", resize: "none" }}
-                                                                      onMouseDown={(e) => {
-                                                                                e.preventDefault()
-                                                                                toast.error("You can't copy text!", {
-                                                                                          position: 'bottom-right',
-                                                                                })
-                                                                      }}
-                                                                      onSelect={(e) => e.preventDefault()}
-                                                                      onContextMenu={(e) => e.preventDefault()}
-                                                                      onDoubleClick={(e) => e.preventDefault()}
-                                                                      readOnly
-                                                                      value={note?.content ? note?.content : "No content found!"}
-                                                            />
+                                                            {
+                                                                      note?.content ? (
+                                                                                <textarea className='textarea focus:outline-none rounded-tl-xl h-[250px] rounded-br-xl rounded-bl-none glass rounded-none p-3 w-full select-none cursor-not-allowed hide-cursor'
+                                                                                          style={{ minHeight: "250px", resize: "none" }}
+                                                                                          onMouseDown={(e) => {
+                                                                                                    e.preventDefault()
+                                                                                                    toast.error("You can't copy text!", {
+                                                                                                              position: 'bottom-right',
+                                                                                                    })
+                                                                                          }}
+                                                                                          onSelect={(e) => e.preventDefault()}
+                                                                                          onContextMenu={(e) => e.preventDefault()}
+                                                                                          onDoubleClick={(e) => e.preventDefault()}
+                                                                                          readOnly
+                                                                                          value={note?.content}
+                                                                                />
+                                                                      ) : (
+                                                                                <div className='flex justify-center items-center cursor-not-allowed rounded-bl-none glass rounded-none rounded-tl-xl h-[250px] rounded-br-xl mb-1.5'
+                                                                                          onMouseDown={(e) => {
+                                                                                                    e.preventDefault()
+                                                                                                    toast.error("Note is empty..!", {
+                                                                                                              position: 'bottom-right',
+                                                                                                    })
+                                                                                          }}
+                                                                                >
+                                                                                          <span className='text-black text-sm font-bold text-center select-none glass rounded-tl-xl rounded-br-xl rounded-bl-none p-3'>
+                                                                                                    No content found!
+                                                                                          </span>
+                                                                                </div>
+                                                                      )
+                                                            }
                                                             <div className='flex justify-start items-center gap-1'>
                                                                       <span className='tooltip' data-tip="Copy Note">
                                                                                 <button

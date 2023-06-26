@@ -115,7 +115,7 @@ const Dashboard: any = () => {
                                                                                                     </span>
                                                                                           </h1>
                                                                                           <h1 className="font-semibold">
-                                                                                                    {userRole && userRole === "developer" ? "Developer" : userRole === "admin" ? "Admin" : "User"} Panel
+                                                                                                    {userRole && userRole === "admin" ? "Admin" : "User"} Panel
                                                                                           </h1>
                                                                                 </div>
                                                                       </div>
@@ -140,6 +140,9 @@ const Dashboard: any = () => {
                                                                       className="logo font-semibold text-center flex items-center flex-col gap-2 text-white"
                                                             >
                                                                       <img src={LOGO} alt="" className="w-16" /> {AppName}
+                                                                      <small className="text-sm text-white">
+                                                                                A Notepad Web App
+                                                                      </small>
                                                             </Link>
                                                   </div>
                                                   <li className="py-2 mt-4">
@@ -165,7 +168,7 @@ const Dashboard: any = () => {
                                                                                           Notes
                                                                                 </NavLink>
                                                                       </li>
-                                                                      <li className="py-1">
+                                                                      {/* <li className="py-1">
                                                                                 <NavLink
                                                                                           className={({ isActive }) =>
                                                                                                     isActive ? "text-white bg-primary" : "text-white"
@@ -174,7 +177,7 @@ const Dashboard: any = () => {
                                                                                 >
                                                                                           <i className="bx bx-cog text-xl"></i> Setting
                                                                                 </NavLink>
-                                                                      </li>
+                                                                      </li> */}
                                                             </>
                                                   )}
                                                   <li className="absolute bottom-5 w-72">

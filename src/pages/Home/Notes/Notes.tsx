@@ -14,6 +14,7 @@ import { signOut } from 'firebase/auth'
 import auth from '../../../auth/Firebase/firebase.init'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { AppName } from '../../../AppName'
+import useUserRole from '../../../hooks/useUserRole'
 
 export default function Notes() {
   const [user] = useAuthState(auth);
@@ -21,6 +22,7 @@ export default function Notes() {
   const [setting, setSetting] = useState(localStorage.getItem('kNotesSetting') ? JSON.parse(localStorage.getItem('kNotesSetting') as any) : {
     showCharWord: 'true',
   });
+  const [userRole] = useUserRole(user);
 
   const updateNote = (id: any) => {
     axios.patch(`${BASE_API}/note?id=${id}`, {
@@ -368,7 +370,7 @@ export default function Notes() {
                 </div>
                 <hr className="font-semibold" />
                 {
-                  user.email === "toufiqhasankiron2@gmail.com" && (
+                  userRole === 'admin' && (
                     <>
                       <li className="py-1 font-semibold">
                         <NavLink
