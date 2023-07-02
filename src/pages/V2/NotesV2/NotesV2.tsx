@@ -3,8 +3,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import { FiTrash, FiDownload, FiClipboard } from 'react-icons/fi'
 import { RxReset } from 'react-icons/rx'
 import { InitializeContext } from "../../../App";
+import useScrollToTop from "../../../hooks/useScrollToTop";
 
 export default function NotesV2() {
+  useScrollToTop();
   const { formatDate, handleTitleChange, handleNoteChange, notesV2, handleNoteBlur, handleDeleteNote, handleCopyToClipboard, handleClearNote, handleDownload } = useContext(InitializeContext)
   const { id } = useParams();
   const [note, setNote] = useState({} as any);
