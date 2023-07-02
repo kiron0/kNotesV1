@@ -407,6 +407,16 @@ export default function Notes() {
                           <img src={NoteImg} className='w-4' alt="" /> All Notes
                         </NavLink>
                       </li>
+                      <li className="py-1 font-semibold">
+                        <NavLink
+                          className={({ isActive }) =>
+                            isActive ? "text-white bg-primary" : ""
+                          }
+                          to="/v2"
+                        >
+                          <img src={NoteImg} className='w-4' alt="" /> Notes V2
+                        </NavLink>
+                      </li>
                     </>
                   )
                 }
@@ -441,7 +451,7 @@ export default function Notes() {
         </label>
       </div>
 
-      <div className='grid grid-cols-1 md:grid-cols-2 gap-5'>
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-5 overflow-y-auto'>
         {notes.slice().reverse().map((note: any) => (
           <div key={note.id} className="mb-4">
             <div className="flex justify-end items-center text-end">
@@ -464,7 +474,7 @@ export default function Notes() {
               onBlur={() => handleNoteBlur(note.id)}
             />
             <div className='flex justify-start items-center gap-1'>
-              <span className='tooltip' data-tip="Delete Note">
+              <span className='tooltip tooltip-right' data-tip="Delete Note">
                 <button
                   className="glass bg-gradient-to-tl md:bg-gradient-to-br from-[#cf9aff] to-[#95c0ff] text-white py-3 px-4 rounded-xl rounded-tl-none rounded-tr-none rounded-br-none uppercase font-semibold -mt-1 focus:outline-none focus:shadow-outline"
                   onClick={() => handleDeleteNote(note.id)}>

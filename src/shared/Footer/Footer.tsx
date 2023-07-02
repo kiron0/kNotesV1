@@ -2,6 +2,7 @@ import React from 'react'
 import { BsGithub, BsLinkedin, BsTwitter } from 'react-icons/bs';
 import { toast } from 'react-hot-toast';
 import { AppName } from '../../AppName';
+import { Link } from 'react-router-dom';
 
 export default function Footer() {
           const handleWorkingOnFeature = () => {
@@ -29,6 +30,7 @@ export default function Footer() {
                                         <span className='px-2 md:border-l cursor-pointer' onClick={handleWorkingOnFeature}>Privacy Policy</span>
                                         <span className='px-2 md:border-l cursor-pointer' onClick={handleWorkingOnFeature}>About</span>
                                         <span className='px-2 md:border-l cursor-pointer' onClick={handleWorkingOnFeature}>Contact</span>
+                                        <Link to={'/v2'} className='px-2 md:border-l cursor-pointer'>Version 2</Link>
                               </div>
 
                               <div className='flex flex-col justify-center items-center pt-6'>
